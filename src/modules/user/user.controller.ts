@@ -1,32 +1,44 @@
 import { Request, Response } from 'express';
 import { UserService } from './user.service';
 import { AuthRequest } from '../../middlewares/ensureAuth';
-
-const userService = new UserService();
+import { registerUserSchema, loginUserSchema, updateUserSchema } from './user.schema';
+import { ZodError } from 'zod';
 
 export class UserController {
+  constructor(private readonly userService = new UserService()) { }
+
   async register(req: Request, res: Response) {
     try {
-      const user = await userService.register(req.body);
+      const data = registerUserSchema.parse(req.body);
+      const user = await this.userService.register(data);
       return res.status(201).json(user);
     } catch (error: any) {
-      return res.status(400).json({ message: error.message });
+      if (error instanceof ZodError) {
+        const messages = error.issues.map(issue => issue.message);
+        return res.status(400).json({ message: 'Erro de validação', details: messages });
+      }
+      res.status(500).json({ message: 'Erro ao registrar usuário.' });
     }
   }
 
   async login(req: AuthRequest, res: Response) {
     try {
-      const result = await userService.login(req.body);
+      const data = loginUserSchema.parse(req.body);
+      const result = await this.userService.login(data);
       return res.status(200).json(result);
     } catch (error: any) {
-      return res.status(401).json({ message: error.message });
+      if (error instanceof ZodError) {
+        const messages = error.issues.map(issue => issue.message);
+        return res.status(400).json({ message: 'Erro de validação', details: messages });
+      }
+      res.status(500).json({ message: 'Erro ao registrar usuário.' });
     }
   }
 
   async getById(req: AuthRequest, res: Response) {
     try {
       const id = Number(req.params.id);
-      const user = await userService.getById(id);
+      const user = await this.userService.getById(id);
       if (!user) return res.status(404).json({ message: 'Usuário não encontrado.' });
       return res.json(user);
     } catch (error: any) {
@@ -36,7 +48,7 @@ export class UserController {
 
   async listAll(_req: Request, res: Response) {
     try {
-      const users = await userService.listAll();
+      const users = await this.userService.listAll();
       return res.json(users);
     } catch (error: any) {
       return res.status(500).json({ message: error.message });
@@ -46,7 +58,7 @@ export class UserController {
   async delete(req: AuthRequest, res: Response) {
     try {
       const id = Number(req.params.id);
-      await userService.deleteUser(id);
+      await this.userService.deleteUser(id);
       return res.status(204).send();
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
@@ -56,10 +68,15 @@ export class UserController {
   async update(req: AuthRequest, res: Response) {
     try {
       const id = Number(req.params.id);
-      const updated = await userService.updateUser(id, req.body);
+      const data = updateUserSchema.parse(req.body);
+      const updated = await this.userService.updateUser(id, data);
       return res.json(updated);
     } catch (error: any) {
-      return res.status(400).json({ message: error.message });
+      if (error instanceof ZodError) {
+        const messages = error.issues.map(issue => issue.message);
+        return res.status(400).json({ message: 'Erro de validação', details: messages });
+      }
+      res.status(500).json({ message: 'Erro ao registrar usuário.' });
     }
   }
 }
