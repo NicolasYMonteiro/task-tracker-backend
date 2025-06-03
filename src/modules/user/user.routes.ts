@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { UserController } from './user.controller';
+import { ensureAuth } from '../../middlewares/ensureAuth';
 
 const router = Router();
 const controller = new UserController();
@@ -28,7 +29,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', ensureAuth, async (req, res) => {
   try {
     await controller.getById(req, res);
   } catch (error) {
@@ -36,7 +37,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', ensureAuth, async (req, res) => {
   try {
     await controller.update(req, res);
   } catch (error) {
@@ -44,7 +45,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', ensureAuth, async (req, res) => {
   try {
     await controller.delete(req, res);
   } catch (error) {

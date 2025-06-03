@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserService } from './user.service';
+import { AuthRequest } from '../../middlewares/ensureAuth';
 
 const userService = new UserService();
 
@@ -13,7 +14,7 @@ export class UserController {
     }
   }
 
-  async login(req: Request, res: Response) {
+  async login(req: AuthRequest, res: Response) {
     try {
       const result = await userService.login(req.body);
       return res.status(200).json(result);
@@ -22,7 +23,7 @@ export class UserController {
     }
   }
 
-  async getById(req: Request, res: Response) {
+  async getById(req: AuthRequest, res: Response) {
     try {
       const id = Number(req.params.id);
       const user = await userService.getById(id);
@@ -42,7 +43,7 @@ export class UserController {
     }
   }
 
-  async delete(req: Request, res: Response) {
+  async delete(req: AuthRequest, res: Response) {
     try {
       const id = Number(req.params.id);
       await userService.deleteUser(id);
@@ -52,7 +53,7 @@ export class UserController {
     }
   }
 
-  async update(req: Request, res: Response) {
+  async update(req: AuthRequest, res: Response) {
     try {
       const id = Number(req.params.id);
       const updated = await userService.updateUser(id, req.body);
