@@ -52,11 +52,6 @@ export class UserService {
     return userWithoutPassword;
   }
 
-  async listAll(): Promise<Omit<User, 'password'>[]> {
-    const users = await this.userRepository.listAll();
-    return users;
-  }
-
   async deleteUser(id: number): Promise<void> {
     await this.userRepository.deleteById(id);
   }

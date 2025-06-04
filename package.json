@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js"
-  },
+  "dev": "ts-node-dev src/server.ts",
+  "build": "tsc",
+  "start": "node dist/main.js",
+  "prisma:migrate": "prisma migrate dev",
+  "prisma:generate": "prisma generate"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/NicolasYMonteiro/task-manager-backend.git"

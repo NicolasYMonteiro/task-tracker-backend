@@ -14,10 +14,6 @@ export class UserRepository {
     return await prisma.user.create({ data });
   }
 
-  async listAll(): Promise<Array<{ id: number; name: string; email: string }>> {
-    return await prisma.user.findMany({ select: { id: true, name: true, email: true } });
-  }
-
   async deleteById(id: number): Promise<void> {
     await prisma.user.delete({ where: { id } });
   }

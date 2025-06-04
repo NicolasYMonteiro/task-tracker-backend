@@ -46,15 +46,6 @@ export class UserController {
     }
   }
 
-  async listAll(_req: Request, res: Response) {
-    try {
-      const users = await this.userService.listAll();
-      return res.json(users);
-    } catch (error: any) {
-      return res.status(500).json({ message: error.message });
-    }
-  }
-
   async delete(req: AuthRequest, res: Response) {
     try {
       const id = Number(req.params.id);
