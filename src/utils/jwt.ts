@@ -8,6 +8,7 @@ interface Payload {
 }
 
 export function generateToken(payload: Payload): string {
+  console.log('Generating JWT with payload:', payload);
   return jwt.sign(payload, JWT_SECRET, { expiresIn: EXPIRES_IN });
 }
 
