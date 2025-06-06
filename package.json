@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "dev": "ts-node-dev src/server.ts",
-  "build": "tsc",
-  "start": "node dist/main.js",
-  "prisma:migrate": "prisma migrate dev",
-  "prisma:generate": "prisma generate"
-},
+    "dev": "ts-node-dev src/server.ts",
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "prisma generate"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/NicolasYMonteiro/task-manager-backend.git"
@@ -24,7 +24,9 @@
   "homepage": "https://github.com/NicolasYMonteiro/task-manager-backend#readme",
   "dependencies": {
     "@prisma/client": "^6.8.2",
+    "@types/cookie": "^0.6.0",
     "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -35,6 +37,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'changeme'; // Ideal: usar variável de ambiente segura
+const JWT_SECRET = process.env.JWT_SECRET || 'changeme'; 
 const EXPIRES_IN = '7d';
 
 interface Payload {
@@ -8,7 +8,6 @@ interface Payload {
 }
 
 export function generateToken(payload: Payload): string {
-  console.log('Generating JWT with payload:', payload);
   return jwt.sign(payload, JWT_SECRET, { expiresIn: EXPIRES_IN });
 }
 

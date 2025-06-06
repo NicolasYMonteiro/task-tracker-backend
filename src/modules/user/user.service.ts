@@ -33,7 +33,9 @@ export class UserService {
 
   async login(data: LoginDTO): Promise<{ token: string; user: Omit<User, 'password'> }> {
     const user = await this.userRepository.findByEmail(data.email);
-    if (!user) throw new Error('Credenciais inválidas.');
+    if (!user) {
+      throw new Error('Credenciais inválidas.');
+    }
 
     const passwordMatch = await comparePassword(data.password, user.password);
     if (!passwordMatch) throw new Error('Credenciais inválidas.');
