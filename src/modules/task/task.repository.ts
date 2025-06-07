@@ -7,10 +7,14 @@ export class TaskRepository {
     return prisma.task.create({ data });
   }
 
-  async findAllByUser(userId: number): Promise<Task[]> {
+  async findAllByUser(
+    userId: number,
+    where?: Prisma.TaskWhereInput,
+    orderBy?: Prisma.TaskOrderByWithRelationInput
+  ): Promise<Task[]> {
     return prisma.task.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
+      where: where || { userId },
+      orderBy: orderBy || { createdAt: 'desc' },
     });
   }
 

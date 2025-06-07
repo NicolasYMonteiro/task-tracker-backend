@@ -1,6 +1,12 @@
 // src/modules/task/task.service.ts
 import { TaskRepository } from './task.repository';
-import { Prisma, Task, TaskStatus } from '@prisma/client';
+import { Prisma, Task } from '@prisma/client';
+import { buildWhereFilter, buildOrderBy, FilterType, OrderType } from '../../utils/queryUtils';
+
+interface ListAllParams {
+  filter: FilterType;
+  order: OrderType;
+}
 
 export class TaskService {
   constructor(private readonly taskRepository = new TaskRepository()) {}
@@ -13,8 +19,11 @@ export class TaskService {
     });
   }
 
-  async listAll(userId: number): Promise<Task[]> {
-    return this.taskRepository.findAllByUser(userId);
+  async listAll(userId: number, { filter, order }: ListAllParams): Promise<Task[]> {
+    const where = buildWhereFilter(userId, filter);
+    const orderBy = buildOrderBy(order);
+  
+    return this.taskRepository.findAllByUser(userId, where, orderBy);
   }
 
   async getById(id: number, userId: number): Promise<Task | null> {
@@ -31,6 +40,7 @@ export class TaskService {
     const status = task?.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
 
     return this.taskRepository.complete(id, userId, i, status);
+
   }
 
   async delete(id: number, userId: number): Promise<void> {

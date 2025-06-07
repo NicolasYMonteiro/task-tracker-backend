@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { TaskService } from './task.service';
 import { createTaskSchema, updateTaskSchema } from './task.schema';
 import { AuthRequest } from '../../middlewares/ensureAuth';
+import { isValidFilter, isValidOrder, FilterType, OrderType } from '../../utils/queryUtils';
 
 export class TaskController {
     constructor(private readonly taskService = new TaskService()) { }
@@ -26,9 +27,19 @@ export class TaskController {
 
     async listAll(req: AuthRequest, res: Response) {
         const userId = Number(req.userId);
-        const tasks = await this.taskService.listAll(userId);
+        const { filter = 'all', order = 'desc' } = req.query;
+      
+        if (!isValidFilter(filter as string) || !isValidOrder(order as string)) {
+            return res.status(400).json({ message: 'Parâmetros inválidos' });
+          }
+      
+        const tasks = await this.taskService.listAll(userId, {
+          filter: filter as FilterType,
+          order: order as OrderType,
+        });
+      
         return res.json(tasks);
-    }
+      }
 
     async getById(req: AuthRequest, res: Response) {
         const userId = Number(req.userId);
@@ -53,10 +64,10 @@ export class TaskController {
     async complete(req: AuthRequest, res: Response) {
         const id = Number(req.params.id);
         const userId = req.userId!;
-      
+
         const task = await this.taskService.complete(id, userId);
         return res.status(200).json(task);
-      }
+    }
 
     async delete(req: AuthRequest, res: Response) {
         const userId = Number(req.userId);
