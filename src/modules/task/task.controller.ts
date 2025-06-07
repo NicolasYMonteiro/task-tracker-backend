@@ -50,6 +50,14 @@ export class TaskController {
         }
     }
 
+    async complete(req: AuthRequest, res: Response) {
+        const id = Number(req.params.id);
+        const userId = req.userId!;
+      
+        const task = await this.taskService.complete(id, userId);
+        return res.status(200).json(task);
+      }
+
     async delete(req: AuthRequest, res: Response) {
         const userId = Number(req.userId);
         const id = Number(req.params.id);

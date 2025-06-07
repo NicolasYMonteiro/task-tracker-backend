@@ -1,6 +1,6 @@
 // src/modules/task/task.repository.ts
 import { prisma } from '../../config/prisma';
-import { Prisma, Task } from '@prisma/client';
+import { Prisma, Task, TaskStatus } from '@prisma/client';
 
 export class TaskRepository {
   async create(data: Prisma.TaskCreateInput): Promise<Task> {
@@ -28,6 +28,18 @@ export class TaskRepository {
       where: { id, userId },
       data,
     }).then(() => this.findById(id, userId) as Promise<Task>);
+  }
+
+  async complete(id: number, userId: number, i: number, status: TaskStatus): Promise<Task | null> {
+    return prisma.task.update({
+      where: { id, userId },
+      data: {
+        sequence: {
+          increment: i,
+        },
+        status: status,
+      },
+    });
   }
 
   async delete(id: number, userId: number): Promise<void> {

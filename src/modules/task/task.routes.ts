@@ -47,6 +47,14 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.put('/complete/:id', async (req, res) => {
+  try {
+    await controller.complete(req, res);
+  } catch (error) {
+    res.status(400).json({ message: 'Erro ao completar task.' });
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   try {
     await controller.delete(req, res);
