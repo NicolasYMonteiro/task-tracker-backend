@@ -27,19 +27,24 @@ export class TaskController {
 
     async listAll(req: AuthRequest, res: Response) {
         const userId = Number(req.userId);
-        const { filter = 'all', order = 'desc' } = req.query;
-      
+        const { 
+            filter = req.query.filter as FilterType || 'all', 
+            order = req.query.order as OrderType || 'desc'
+        } = req.query;
+
+        await this.taskService.resetInterval(userId);
+
         if (!isValidFilter(filter as string) || !isValidOrder(order as string)) {
             return res.status(400).json({ message: 'Parâmetros inválidos' });
-          }
-      
+        }
+
         const tasks = await this.taskService.listAll(userId, {
-          filter: filter as FilterType,
-          order: order as OrderType,
+            filter: filter as FilterType,
+            order: order as OrderType,
         });
-      
+
         return res.json(tasks);
-      }
+    }
 
     async getById(req: AuthRequest, res: Response) {
         const userId = Number(req.userId);
@@ -75,4 +80,5 @@ export class TaskController {
         await this.taskService.delete(id, userId);
         return res.status(204).send();
     }
+
 }
