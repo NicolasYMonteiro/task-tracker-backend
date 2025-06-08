@@ -15,7 +15,11 @@ app.use(express.json());
 
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: [
+    'https://task-tracker-frontend-nine.vercel.app',
+    'https://task-tracker-frontend-nicolas-yans-projects.vercel.app',
+    'https://task-tracker-frontend-git-main-nicolas-yans-projects.vercel.app'
+  ],  
   credentials: true               
 }));
 
