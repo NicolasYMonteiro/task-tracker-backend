@@ -18,7 +18,8 @@ app.use(cors({
   origin: [
     'https://task-tracker-frontend-nine.vercel.app',
     'https://task-tracker-frontend-nicolas-yans-projects.vercel.app',
-    'https://task-tracker-frontend-git-main-nicolas-yans-projects.vercel.app'
+    'https://task-tracker-frontend-git-main-nicolas-yans-projects.vercel.app',
+    'http://localhost:3000',
   ],  
   credentials: true               
 }));
