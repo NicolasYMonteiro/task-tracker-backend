@@ -27,14 +27,13 @@ export class UserController {
       const result = await this.userService.login(data);
       res.cookie('token', result.token, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none',
+        secure: false,
+        sameSite: "lax",
         path: '/',
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
-
       return res.status(200).json(result);
-    } catch (error: any) {
+    } catch (error: any) {1
       if (error instanceof ZodError) {
         const messages = error.issues.map(issue => issue.message);
         return res.status(400).json({ message: 'Erro de validação', details: messages });

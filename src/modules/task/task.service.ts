@@ -51,14 +51,14 @@ export class TaskService {
 
   async resetInterval(idUser: number) {
     const now = new Date();
-
+    now.setHours(0, 0, 0, 0);
     const tasks = await this.taskRepository.findAllByUser(idUser);
 
     for (const task of tasks) {
       if (!task.interval) continue;
       const resetTime = add(new Date(task.date), { days: task.interval ?? 0 });
 
-      if (task.date <= now) {
+      if (task.date < now) {
         if (task.status === 'COMPLETED') {
           await this.update(task.id, idUser, {
             status: 'PENDING',

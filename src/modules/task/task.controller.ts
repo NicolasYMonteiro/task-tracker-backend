@@ -55,6 +55,7 @@ export class TaskController {
     }
 
     async update(req: AuthRequest, res: Response) {
+        console.log('update tarefa');
         try {
             const userId = Number(req.userId);
             const id = Number(req.params.id);

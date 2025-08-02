@@ -14,16 +14,13 @@ const app = express();
 app.use(express.json());
 
 app.use(cookieParser());
+
 app.use(cors({
-  origin: [
-    'https://task-tracker-frontend-nine.vercel.app',
-    'https://task-tracker-frontend-nicolas-yans-projects.vercel.app',
-    'https://task-tracker-frontend-git-main-nicolas-yans-projects.vercel.app',
-    'https://atlasdesenvolvimento.vercel.app'
-  ],
+  origin: 'http://localhost:3000', 
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  exposedHeaders: ['Set-Cookie'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true               
 }));
 
 app.use(helmet());
