@@ -29,11 +29,12 @@ export class UserController {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        path: '/',
+        domain: `${process.env.CORS_ORIGIN}`,
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
       return res.status(200).json(result);
-    } catch (error: any) {1
+    } catch (error: any) {
+      1
       if (error instanceof ZodError) {
         const messages = error.issues.map(issue => issue.message);
         return res.status(400).json({ message: 'Erro de validação', details: messages });
