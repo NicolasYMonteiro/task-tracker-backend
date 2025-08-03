@@ -27,7 +27,7 @@ export class UserController {
       const result = await this.userService.login(data);
       res.cookie('token', result.token, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: "lax",
         path: '/',
         maxAge: 7 * 24 * 60 * 60 * 1000
