@@ -11,7 +11,6 @@ export class UserRepository {
     return await prisma.user.findUnique({ where: { id } });
   }*/
 
-  // user.repository.ts
   async findByIdWithTasks(id: number): Promise<(User & { tasks: Task[] }) | null> {
     return await prisma.user.findUnique({
       where: { id },

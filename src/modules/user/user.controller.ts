@@ -54,7 +54,6 @@ export class UserController {
     }
   }*/
 
-  // user.controller.ts
   async getProfile(req: AuthRequest, res: Response) {
     try {
       const id = Number(req.userId);

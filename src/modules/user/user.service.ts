@@ -60,12 +60,16 @@ export class UserService {
     if (!user) return null;
 
     const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     // Calcular estatísticas das tarefas
     const completedTasks = user.tasks.filter(t => t.status === 'COMPLETED');
     const pendingTasks = user.tasks.filter(t => t.status === 'PENDING');
-    const overdueTasks = pendingTasks.filter(t => t.date < now);
-
+    const overdueTasks = pendingTasks.filter(t => {
+      const taskDate = new Date(t.date);
+      const taskDateOnly = new Date(taskDate.getFullYear(), taskDate.getMonth(), taskDate.getDate());
+      return taskDateOnly < today;
+    });
     // Calcular tempo médio de conclusão
     let averageCompletionTime = 0;
     if (completedTasks.length > 0) {
