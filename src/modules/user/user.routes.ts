@@ -21,15 +21,15 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.get('/:id', ensureAuth, async (req, res) => {
+router.get('/', ensureAuth, async (req, res) => {
   try {
-    await controller.getById(req, res);
+    await controller.getProfile(req, res);
   } catch (error) {
     res.status(404).json({ message: 'Erro ao buscar usuário.' });
   }
 });
 
-router.put('/:id', ensureAuth, async (req, res) => {
+router.put('/', ensureAuth, async (req, res) => {
   try {
     await controller.update(req, res);
   } catch (error) {
@@ -37,7 +37,7 @@ router.put('/:id', ensureAuth, async (req, res) => {
   }
 });
 
-router.delete('/:id', ensureAuth, async (req, res) => {
+router.delete('/', ensureAuth, async (req, res) => {
   try {
     await controller.delete(req, res);
   } catch (error) {

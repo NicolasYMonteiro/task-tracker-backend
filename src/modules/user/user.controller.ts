@@ -43,12 +43,28 @@ export class UserController {
     }
   }
 
-  async getById(req: AuthRequest, res: Response) {
+  /*async getById(req: AuthRequest, res: Response) {
     try {
-      const id = Number(req.params.id);
+      const id = Number(req.userId);
       const user = await this.userService.getById(id);
       if (!user) return res.status(404).json({ message: 'Usuário não encontrado.' });
       return res.json(user);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
+    }
+  }*/
+
+  // user.controller.ts
+  async getProfile(req: AuthRequest, res: Response) {
+    try {
+      const id = Number(req.userId);
+      const userProfile = await this.userService.getProfileData(id);
+
+      if (!userProfile) {
+        return res.status(404).json({ message: 'Usuário não encontrado.' });
+      }
+
+      return res.json(userProfile);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
@@ -56,7 +72,7 @@ export class UserController {
 
   async delete(req: AuthRequest, res: Response) {
     try {
-      const id = Number(req.params.id);
+      const id = Number(req.userId);
       await this.userService.deleteUser(id);
       return res.status(204).send();
     } catch (error: any) {
@@ -66,7 +82,7 @@ export class UserController {
 
   async update(req: AuthRequest, res: Response) {
     try {
-      const id = Number(req.params.id);
+      const id = Number(req.userId);
       const data = updateUserSchema.parse(req.body);
       const updated = await this.userService.updateUser(id, data);
       return res.json(updated);

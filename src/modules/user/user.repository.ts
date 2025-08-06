@@ -1,13 +1,28 @@
 import { prisma } from '../../config/prisma';
 import { User } from '@prisma/client';
+import { Task } from '../../utils/types';
 
 export class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
     return await prisma.user.findUnique({ where: { email } });
   }
 
-  async findById(id: number): Promise<User | null> {
+  /*async findById(id: number): Promise<User | null> {
     return await prisma.user.findUnique({ where: { id } });
+  }*/
+
+  // user.repository.ts
+  async findByIdWithTasks(id: number): Promise<(User & { tasks: Task[] }) | null> {
+    return await prisma.user.findUnique({
+      where: { id },
+      include: {
+        tasks: {
+          orderBy: {
+            date: 'desc'
+          }
+        }
+      }
+    });
   }
 
   async create(data: { name: string; email: string; password: string }): Promise<User> {
