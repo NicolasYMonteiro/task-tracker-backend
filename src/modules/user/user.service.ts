@@ -117,4 +117,136 @@ export class UserService {
     const { password, ...userWithoutPassword } = updated;
     return userWithoutPassword;
   }
+
+  async getProductivityData(id: number): Promise<any> {
+    const user = await this.userRepository.findByIdWithTasks(id);
+    if (!user) return null;
+
+    const now = new Date();
+    const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    // Dados para gráfico de tarefas por dia (últimos 30 dias)
+    const dailyTasks = [];
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      const dayTasks = user.tasks.filter(task => {
+        const taskDate = new Date(task.date).toISOString().split('T')[0];
+        return taskDate === dateStr;
+      });
+
+      dailyTasks.push({
+        date: dateStr,
+        total: dayTasks.length,
+        completed: dayTasks.filter(t => t.status === 'COMPLETED').length,
+        pending: dayTasks.filter(t => t.status === 'PENDING').length,
+        overdue: dayTasks.filter(t => {
+          const taskDate = new Date(t.date);
+          return taskDate < new Date(date.getFullYear(), date.getMonth(), date.getDate()) && t.status === 'PENDING';
+        }).length
+      });
+    }
+
+    // Dados para gráfico de produtividade semanal
+    const weeklyData = [];
+    for (let i = 3; i >= 0; i--) {
+      const weekStart = new Date(now.getTime() - (i * 7 + now.getDay()) * 24 * 60 * 60 * 1000);
+      const weekEnd = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
+      
+      const weekTasks = user.tasks.filter(task => {
+        const taskDate = new Date(task.date);
+        return taskDate >= weekStart && taskDate <= weekEnd;
+      });
+
+      weeklyData.push({
+        week: `Semana ${4 - i}`,
+        completed: weekTasks.filter(t => t.status === 'COMPLETED').length,
+        total: weekTasks.length,
+        efficiency: weekTasks.length > 0 ? 
+          Math.round((weekTasks.filter(t => t.status === 'COMPLETED').length / weekTasks.length) * 100) : 0
+      });
+    }
+
+    // Dados para gráfico de prioridades
+    const priorityData = [
+      {
+        priority: 'Alta',
+        count: user.tasks.filter(t => t.emergency).length,
+        color: '#ef4444'
+      },
+      {
+        priority: 'Média',
+        count: user.tasks.filter(t => !t.emergency && t.status === 'PENDING').length,
+        color: '#f59e0b'
+      },
+      {
+        priority: 'Concluída',
+        count: user.tasks.filter(t => t.status === 'COMPLETED').length,
+        color: '#10b981'
+      }
+    ];
+
+    // Dados para gráfico de tendência mensal
+    const monthlyTrend = [];
+    for (let i = 5; i >= 0; i--) {
+      const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+      
+      const monthTasks = user.tasks.filter(task => {
+        const taskDate = new Date(task.date);
+        return taskDate >= monthStart && taskDate <= monthEnd;
+      });
+
+      monthlyTrend.push({
+        month: monthStart.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }),
+        completed: monthTasks.filter(t => t.status === 'COMPLETED').length,
+        created: monthTasks.length
+      });
+    }
+
+    return {
+      dailyTasks,
+      weeklyData,
+      priorityData,
+      monthlyTrend,
+      summary: {
+        totalTasks: user.tasks.length,
+        completedTasks: user.tasks.filter(t => t.status === 'COMPLETED').length,
+        completionRate: user.tasks.length > 0 ? 
+          Math.round((user.tasks.filter(t => t.status === 'COMPLETED').length / user.tasks.length) * 100) : 0,
+        averageTasksPerDay: dailyTasks.reduce((sum, day) => sum + day.total, 0) / 30,
+        streak: this.calculateStreak(user.tasks)
+      }
+    };
+  }
+
+  private calculateStreak(tasks: any[]): number {
+    const completedTasks = tasks
+      .filter(t => t.status === 'COMPLETED')
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    if (completedTasks.length === 0) return 0;
+
+    let streak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (let i = 0; i < 30; i++) {
+      const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+      const hasTaskOnDate = completedTasks.some(task => {
+        const taskDate = new Date(task.date);
+        taskDate.setHours(0, 0, 0, 0);
+        return taskDate.getTime() === checkDate.getTime();
+      });
+
+      if (hasTaskOnDate) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  }
 }

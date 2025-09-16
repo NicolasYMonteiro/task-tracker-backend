@@ -93,4 +93,19 @@ export class UserController {
       res.status(500).json({ message: 'Erro ao registrar usuário.' });
     }
   }
+
+  async getProductivityData(req: AuthRequest, res: Response) {
+    try {
+      const id = Number(req.userId);
+      const productivityData = await this.userService.getProductivityData(id);
+
+      if (!productivityData) {
+        return res.status(404).json({ message: 'Usuário não encontrado.' });
+      }
+
+      return res.json(productivityData);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
 }

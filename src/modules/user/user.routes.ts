@@ -45,4 +45,12 @@ router.delete('/', ensureAuth, async (req, res) => {
   }
 });
 
+router.get('/productivity', ensureAuth, async (req, res) => {
+  try {
+    await controller.getProductivityData(req, res);
+  } catch (error) {
+    res.status(400).json({ message: 'Erro ao buscar dados de produtividade.' });
+  }
+});
+
 export default router;
